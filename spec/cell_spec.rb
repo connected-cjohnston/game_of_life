@@ -14,64 +14,55 @@ require './app/cell'
 #
 
 RSpec.describe Cell do
-  it 'should return dead when cell is dead and no cells are around it' do
-    cell = Cell.new(false, build_neighbours(0))
+  it 'should toggle a cells state' do
+    cell = new_cell(Cell::ALIVE, 0)
 
-    cell.tick
+    cell.toggle!
 
-    expect(cell.alive).to eq(false)
+    expect(cell.alive?).to eq(Cell::DEAD)
   end
 
-  it 'should return dead when an alive cell has no neighbours' do
-    cell = Cell.new(true, build_neighbours(0))
-
-    cell.tick
-
-    expect(cell.alive).to eq(false)
+  it 'should return dead when there are 0 neighbours and cell starts alive' do
+    cell = new_cell(Cell::ALIVE, 0)
+    expect(cell.next_state?).to eq(Cell::DEAD)
   end
 
-  it 'should die when surrounded by few than 2 neighbours' do
-    cell1 = Cell.new(true, [])
-    cell = Cell.new(true, [cell1])
-
-    cell.tick
-
-    expect(cell.alive).to eq(false)
+  it 'should return dead when there are 1 neighbours' do
+    cell = new_cell(Cell::ALIVE, 1)
+    expect(cell.next_state?).to eq(Cell::DEAD)
   end
 
-  it 'should come alive when surrounded by 3 alive cells' do
-    cell = Cell.new(false, build_neighbours(3))
-
-    cell.tick
-
-    expect(cell.alive).to eq(true)
+  it 'should stay alive when there are 2 neighbours and cell is alive' do
+    cell = new_cell(Cell::ALIVE, 2)
+    expect(cell.next_state?).to eq(Cell::ALIVE)
   end
 
-  it 'should die when surrounded by moer than 3 neighbours' do
-    cell = Cell.new(true, build_neighbours(4))
-
-    cell.tick
-
-    expect(cell.alive).to eq(false)
+  it 'should stay dead when there are 2 neighbours and cell is dead' do
+    cell = new_cell(Cell::DEAD, 2)
+    expect(cell.next_state?).to eq(Cell::DEAD)
   end
 
-  it 'should stay alive when surrounded by 2 neighbours' do
-    cell = Cell.new(true, build_neighbours(2))
-
-    cell.tick
-
-    expect(cell.alive).to eq(true)
+  it 'should stay alive with 3 alive neighbours' do
+    cell = new_cell(Cell::ALIVE, 3)
+    expect(cell.next_state?).to eq(Cell::ALIVE)
   end
 
-  it 'should stay dead when surrounded by 2 neighbours' do
-    cell = Cell.new(false, build_neighbours(2))
+  it 'should die with 4 alive neighbours' do
+    cell = new_cell(Cell::ALIVE, 4)
+    expect(cell.next_state?).to eq(Cell::DEAD)
+  end
 
-    cell.tick
-
-    expect(cell.alive).to eq(false)
+  def new_cell(state, neighbours)
+    Cell.new(state, build_neighbours(neighbours))
   end
 
   def build_neighbours(num)
-    (0...num).map { Cell.new(true, []) }
+    (0...num).map { Cell.new(Cell::ALIVE, []) }
+  end
+
+  def build_grid(n, m)
+    Array.new(n) do |_|
+      Array.new(m) { |_| Cell.new(Cell::DEAD) }
+    end
   end
 end

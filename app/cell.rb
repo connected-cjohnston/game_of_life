@@ -2,6 +2,9 @@
 
 # understands the state of a cell
 class Cell
+  DEAD = false
+  ALIVE = true
+
   attr_accessor :alive, :neighbours
 
   def initialize(starting_state, neighbours)
@@ -9,31 +12,24 @@ class Cell
     @neighbours = neighbours
   end
 
-  def tick
-    if lonely?
-      @alive = false
-    elsif reproduction?
-      @alive = true
-    elsif over_populated?
-      @alive = false
-    end
+  def toggle!
+    @alive = !@alive
+  end
+
+  def alive?
+    @alive
+  end
+
+  def next_state?
+    return alive? if alive_neighbours == 2
+    return true if alive_neighbours == 3
+    return false if alive_neighbours >= 4
+    return false if alive_neighbours <= 1
   end
 
   private
 
-  def lonely?
-    alive_neighbours < 2
-  end
-
-  def over_populated?
-    alive_neighbours >= 4
-  end
-
-  def reproduction?
-    alive_neighbours == 3
-  end
-
   def alive_neighbours
-    neighbours.filter { |n| n.alive == true }.length
+    @neighbours.filter { |n| n.alive? == ALIVE }.length
   end
 end
