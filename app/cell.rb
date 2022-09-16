@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+require './app/world'
 
 class Cell
 
-  attr_reader :grid, :x, :y
+  attr_reader :world, :x, :y
 
-  def initialize(grid, x, y)
-    @grid = grid
+  def initialize(world, x, y)
+    @world = world
     @x = x
     @y = y
     @state = false
@@ -27,9 +28,7 @@ class Cell
   end
 
   def neighbours
-    get_neighbours.select do |c|
-      c.alive?
-    end.length
+    get_neighbours.select { |c| c.alive? }.length
   end
 
   private
@@ -37,22 +36,18 @@ class Cell
   def get_neighbours
     neighbours = []
 
-    if @grid[@x - 1]
-      neighbours << @grid[@x - 1][@y - 1] if @grid[@x - 1][@y - 1]
-      neighbours << @grid[@x - 1][@y]
-      neighbours << @grid[@x - 1][@y + 1] if @grid[@x - 1][@y + 1]
-    end
+    neighbours << world.cell_at(@x - 1, @y - 1)
+    neighbours << world.cell_at(@x - 1, @y)
+    neighbours << world.cell_at(@x - 1, @y + 1)
 
-    neighbours << @grid[@x][@y - 1] if @grid[@x][@y - 1]
-    neighbours << @grid[@x][@y + 1] if @grid[@x][@y + 1]
+    neighbours << world.cell_at(@x, @y - 1)
+    neighbours << world.cell_at(@x, @y + 1)
 
-    if @grid[@x + 1]
-      neighbours << @grid[@x + 1][@y - 1] if @grid[@x + 1][@y - 1]
-      neighbours << @grid[@x + 1][@y]
-      neighbours << @grid[@x + 1][@y + 1] if @grid[@x + 1][@y + 1]
-    end
+    neighbours << world.cell_at(@x + 1, @y - 1)
+    neighbours << world.cell_at(@x + 1, @y)
+    neighbours << world.cell_at(@x + 1, @y + 1)
 
-    neighbours
+    neighbours.compact
   end
 
   def lonely?

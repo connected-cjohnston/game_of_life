@@ -19,10 +19,14 @@ class World
   end
 
   def cell_at(x, y)
-    @grid[x][y] if @grid[x]
+    @grid[x][y] if @grid[x] && @grid[x][y]
   end
 
   def next_generation!
-
+    @grid.flatten.filter do |cell|
+      cell.change_state?
+    end.each do |cell|
+      cell.toggle!
+    end
   end
 end
