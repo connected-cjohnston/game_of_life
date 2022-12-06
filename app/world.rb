@@ -1,5 +1,4 @@
 class World
-
   def initialize(height, width)
     @grid = []
     height.times do |x|
@@ -23,10 +22,12 @@ class World
   end
 
   def next_generation!
-    @grid.flatten.filter do |cell|
-      cell.change_state?
-    end.each do |cell|
-      cell.toggle!
-    end
+    @grid.flatten.filter(&:change_state?).each(&:toggle!)
+  end
+
+  def to_s
+    @grid.map do |row|
+      row.map(&:to_s).join('')
+    end.join(',')
   end
 end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
+
 require './app/world'
 
+# Defines a cell in game of life
 class Cell
 
   attr_reader :world, :x, :y
@@ -24,16 +26,21 @@ class Cell
     return true if lonely?
     return true if reproduction?
     return true if overpopulated?
+
     false
   end
 
   def neighbours
-    get_neighbours.select { |c| c.alive? }.length
+    retrieve_neighbours.select(&:alive?).length
+  end
+
+  def to_s
+    alive? ? '*' : '-'
   end
 
   private
 
-  def get_neighbours
+  def retrieve_neighbours
     neighbours = []
 
     neighbours << world.cell_at(@x - 1, @y - 1)
