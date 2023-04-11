@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Defines the entire world for game of life
 class World
   def initialize(height, width)
     @grid = []

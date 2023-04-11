@@ -62,7 +62,7 @@ class Cell
   end
 
   def overpopulated?
-    neighbours >=4 && alive?
+    neighbours >= 4 && alive?
   end
 
   def reproduction?
